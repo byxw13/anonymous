@@ -204,39 +204,27 @@ Guidelines:
 
             if forward_wrong != reverse_wrong:
                 review_prompt = f"""
-You are a Fact-Checking Adjudicator. Your task is to resolve a dispute about a 'Generated Answer' by performing targeted, independent verifications on the most critical points of disagreement. **You must pinpoint the exact point of failure without generating a full, new step-by-step solution.**
+You are a final reviewer. The following answer has received conflicting feedback from two different evaluation perspectives:
 
-**Question:**
-{question}
+    Forward View Feedback: {forward_resp}
 
-**Generated Answer:**
-{answer}
+    Reverse View Feedback: {reverse_resp}
 
-**Forward View Feedback:**
-{forward_resp}
+Your task is to carefully analyze both feedbacks and determine which one provides a more accurate and well-founded judgment. Please clearly explain:
 
-**Reverse View Feedback:**
-{reverse_resp}
+    Which feedback (forward or reverse) you find more reliable and why.
 
-### Instructions:
+    Whether the identified reasoning or evidence supports the correctness or incorrectness of the answer.
 
-**1. Identify the Crux of the Disagreement:**
--   Read all provided inputs (`Generated Answer` and the two `Feedbacks`).
--   What is the single most critical calculation, logical step, or interpretation of a premise where the views conflict? State this crux clearly.
+    Identify any flaws or strengths in the reasoning provided by both perspectives.
 
-**2. Perform Targeted ("Surgical") Verification:**
--   Focus **only** on the critical point of disagreement you identified in Step 1.
--   **Perform a focused, independent calculation or logical check** to resolve this specific point. You MUST use only the original `Question` as your source of truth for this check.
--   State the result of your targeted check clearly and concisely.
-**3. Render the Final Verdict:**
--   Based **only on the outcome of your targeted verification in Step 2**, determine if the `Generated Answer`'s final conclusion is correct or incorrect.
--   Provide a **brief (1-2 sentences) explanation** that hinges directly on the result of your verification.
--   **Crucially, do NOT write out a new, full solution.**
+Then, based on your assessment, conclude with either:
 
-Your entire response must end with one of the two following exact statements:
 "The answer is correct."
 or
 "The answer is incorrect."
+
+Do not skip the analysis. Always end your response with one of the above exact statements.
     """
                 review_resp = self.make_request_with_retries(
                     self.client.chat.completions.create, 3, 60,
